@@ -113,16 +113,6 @@ where dea.continent is not null AND dea.continent <> ''
 
 
 
---ALTER TABLE CovidVaccinations
---ALTER COLUMN date date;
-
---ALTER TABLE CovidVaccinations
---ALTER COLUMN population FLOAT;
-
-
---ALTER TABLE CovidVaccinations
---ALTER COLUMN new_vaccinations FLOAT;
-
 --Use CTE
 
 With PopvsVac (Continent, Location, Date, Population,New_Vaccinations,RollingPeopleVaccinated)
