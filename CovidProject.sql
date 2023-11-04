@@ -2,11 +2,11 @@ select *
 from CovidDeaths
 where continent is not null AND continent <> '';
 
--- Change the data type of total_deaths to FLOAT
+-- Change data types 
 ALTER TABLE CovidDeaths
 ALTER COLUMN total_deaths FLOAT;
 
--- Change data types 
+
 ALTER TABLE CovidDeaths
 ALTER COLUMN population FLOAT;
 
