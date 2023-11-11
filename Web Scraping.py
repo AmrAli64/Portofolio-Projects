@@ -1,120 +1,43 @@
-#!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# Imported necessary libraries
+from bs4 import BeautifulSoup  # Used BS for HTML parsing
+import requests  # Used for making HTTP requests
+import pandas as pd  # Used Pandas for data manipulation
 
-
-from bs4 import BeautifulSoup
-import requests
-
-
-# In[2]:
-
-
+# Defined the URL to be scraped
 url = 'https://en.wikipedia.org/wiki/List_of_largest_companies_in_the_United_States_by_revenue'
-    
-page=requests.get(url)
 
-soup= BeautifulSoup(page.text, 'html')
+# Sent an HTTP request to the URL and got the content
+page = requests.get(url)
 
+# Created a BeautifulSoup object to parse the HTML content
+soup = BeautifulSoup(page.text, 'html.parser')
 
-# In[3]:
-
-
+# Printed the prettified HTML content (optional)
 print(soup.prettify())
 
+# Found the table with class 'wikitable sortable'
+table = soup.find('table', class_='wikitable sortable')
 
-# In[4]:
+# Extracted column headers from the table
+table_headers = table.find_all('th')
+column_headers = [header.text.strip() for header in table_headers]
 
+# Created an empty DataFrame with the extracted column headers
+df = pd.DataFrame(columns=column_headers)
 
-<table class="wikitable sortable" 
-<caption>
+# Found all rows in the table (skipped the first row, as it contained headers)
+table_rows = table.find_all('tr')[1:]
 
-
-# In[5]:
-
-
-table= soup.find_all('table')[1]
-
-
-# In[6]:
-
-
-soup.find('table',class_ = 'wikitable sortable')
-
-
-# In[7]:
-
-
-table = table.find_all('th')
-
-
-# In[8]:
-
-
-print(table)
-
-
-# In[9]:
-
-
-world_titles= table.find_all('th')
-
-
-# In[10]:
-
-
-world_titles
-
-
-# In[11]:
-
-
-world_title_tables = [title.text.strip() for title in world_titles]
-
-print(world_title_tables)
-
-
-# In[12]:
-
-
-import pandas as pd
-
-
-# In[13]:
-
-
-df= pd.DataFrame(columns = world_title_tables)
-
-df
-
-
-# In[14]:
-
-
-column_data = table.find_all('tr')
-
-
-# In[15]:
-
-
-for row in column_data[1:]:
+# Iterated through each row, extracted data, and appended it to the DataFrame
+for row in table_rows:
     row_data = row.find_all('td')
-    Individual_row_data = [data.text.strip() for data in row_data]
-   
-    length= len(df)
-    df.loc[length] = Individual_row_data
+    individual_row_data = [data.text.strip() for data in row_data]
+    df = df.append(pd.Series(individual_row_data, index=df.columns), ignore_index=True)
 
+# Displayed the DataFrame
+print(df)
 
-# In[16]:
-
-
-df
-
-
-# In[17]:
-
-
-df.to_csv(r'C:\Users\moham\Documents\Python Web Scraping\Companies.csv', index = False)
-
-
+# Saved the DataFrame to a CSV file
+df.to_csv(r'C:\Users\moham\Documents\Python Web Scraping\Companies.csv', index=False)
